@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Pong Game</title>
+	<link href="https://fonts.googleapis.com/css?family=Nosifer" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+	<style type="text/css">
+		#canvas {
+			
+			background-color: orange;
+			border: 4px solid black;
+		}
+		.container {
+			margin: auto;
+			text-align: center;
+			background-color: black;
+			
+			width: 530px;
+			border-radius: 35px;
+			height: 700px;
+			font-family: 'Lora', serif;
+			color: #fff;
+		}
+		h1 {
+			font-family: 'Nosifer', cursive;
+			font-size: 30px;
+		}
+		p {
+			font-size: 20px;
+		}
+		body {
+			background-color: grey;
+		}
+		#score {
+			font-size: 20px;
+			vertical-align: top;
+			padding: 0;
+			margin: 0;
+			border: 0;
+			position: relative;
+			top: -10px;
+			left: -200px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body">
+<div class="container">
+	<h1>Greg's First Canvas Game</h1>
+	
+	<canvas id="canvas"></canvas>
+	<p id="score">Score:</p>
+	<p>My 1st canvas game using Javascript. <br><span style="padding:20px 0 0 10px; float: left;font-size: 20px;">Tips:</span> <br>
+	<ul>
+		<li style="float: left">Green,Black and Blue will kill you!</li><br/>
+		<li style="float: left">White will give you extra points</li>
+	</ul> </p>
+</div> <!-- end of div -->
+<script type="text/javascript">
+		//global variables stuff 
+	var canvas = document.getElementById("canvas");
+	var ctx  = canvas.getContext("2d");
+	canvas.width = 480;
+	canvas.height = 270;
+	score = 1;
+
+
+	//keyboard Controls============================================
+	leftPressed = false;
+	upPressed = false;
+	rightPressed = false;
+	downPressed = false;
+
+
+
+	document.addEventListener("keydown",keyDownHandler,false);
+	document.addEventListener("keyup",keyUpHandler,false);
+
+	function keyDownHandler(e){
+		if(e.keyCode == 37){
+			leftPressed = true;
+		} else if(e.keyCode == 38){
+			upPressed = true;
+		} else if(e.keyCode == 39){
+			rightPressed = true;
+		} else if(e.keyCode == 40){
+			downPressed = true;
+		}
+	}
+
+	function keyUpHandler(e){
+		if(e.keyCode == 37){
+			leftPressed = false;
+		} else if(e.keyCode == 38){
+			upPressed = false;
+		} else if(e.keyCode == 39){
+			rightPressed = false;
+		} else if(e.keyCode == 40){
+			downPressed = false;
+		}
+	}
+
+
+
+
+	//components =========================================================
+	redPlayer = new player(10,10,"red",20,20);
+	bluePc = new computer(130,120,"blue",25,25);
+	greenPc = new computer(200,200,"green",25,25);
+	blackPc = new computer(250,250,"black",25,25);
+	whitePc = new computer(60,210,"white",25,25);
+
+	function player(x,y,color,width,height){
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.update = function(){
+		ctx.fillStyle = color;
+		ctx.fillRect(this.x,this.y,this.width,this.height);
+	}
+	}
+
+	function computer(x,y,color,width,height){
+		this.x = x;
+		this.y = y;
+		this.speedX = 1.8;
+		this.speedY = -1.8;
+		this.width = width;
+		this.height = height;
+		this.update = function(){
+			ctx.fillStyle = color;
+			ctx.fillRect(this.x, this.y, this.width,this.height);
+			this.x += this.speedX;
+			this.y +=this.speedY;
+		}
+		
+
+		
+	}
+	// end of components ======================================================
+
+
+
+
+
+
+	function updateEverything(){
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		redPlayer.update();
+		bluePc.update();
+		greenPc.update();
+		blackPc.update();
+		whitePc.update();
+		
+		
+		//player Movement
+
+		if(leftPressed){
+			redPlayer.x -=2.5;
+		} else if(rightPressed){
+			redPlayer.x +=2.5;
+		} else if(upPressed){
+			redPlayer.y -=2.5;
+		} else if(downPressed){
+			redPlayer.y +=2.5;
+		}
+
+		//Player contraints
+		if(redPlayer.x < 0){
+			redPlayer.x +=5;
+		} else if(redPlayer.x > canvas.width -20){
+			redPlayer.x -=5;
+		} else if(redPlayer.y < 0){
+			redPlayer.y +=5;
+		} else if(redPlayer.y > canvas.height -20){
+			redPlayer.y -=5;
+		}
+
+
+		//PC contraints 
+
+		if (bluePc.y > canvas.height -20 || bluePc.y < 0){
+			bluePc.speedY = -bluePc.speedY;
+		} else if (bluePc.x > canvas.width -20 || bluePc.x < 0){
+			bluePc.speedX = -bluePc.speedX;
+		}
+
+		if (greenPc.y > canvas.height -20 || greenPc.y < 0){
+			greenPc.speedY = -greenPc.speedY;
+		} else if (greenPc.x > canvas.width -20 || greenPc.x < 0){
+			greenPc.speedX = -greenPc.speedX;
+		}
+
+		if (blackPc.y > canvas.height -20 || blackPc.y < 0){
+			blackPc.speedY = -blackPc.speedY;
+		} else if (blackPc.x > canvas.width -20 || blackPc.x < 0){
+			blackPc.speedX = -blackPc.speedX;
+		}
+
+		if (whitePc.y > canvas.height -20 || whitePc.y < 0){
+			whitePc.speedY = -whitePc.speedY;
+		} else if (whitePc.x > canvas.width -20 || whitePc.x < 0){
+			whitePc.speedX = -whitePc.speedX;
+		}
+
+		//Collision Detection
+
+		if(redPlayer.x < blackPc.x + blackPc.width && redPlayer.x + redPlayer.width > blackPc.x &&
+			redPlayer.y < blackPc.y + blackPc.width && redPlayer.y + redPlayer.width > blackPc.y){
+			gameOverMan();
+		}
+
+		if(redPlayer.x < bluePc.x + bluePc.width && redPlayer.x + redPlayer.width > bluePc.x &&
+			redPlayer.y < bluePc.y + bluePc.width && redPlayer.y + redPlayer.width > bluePc.y){
+			gameOverMan();
+		}
+
+		if(redPlayer.x < greenPc.x + greenPc.width && redPlayer.x + redPlayer.width > greenPc.x &&
+			redPlayer.y < greenPc.y + greenPc.width && redPlayer.y + redPlayer.width > greenPc.y){
+			gameOverMan();
+		}
+
+		if(redPlayer.x < whitePc.x + whitePc.width && redPlayer.x + redPlayer.width > whitePc.x &&
+			redPlayer.y < whitePc.y + whitePc.width && redPlayer.y + redPlayer.width > whitePc.y){
+			score ++;
+			gameOnMan();
+		}
+
+
+
+
+	} // <!-- end of updateEverything --->
+
+	function gameOverMan(){
+		alert("Game Over Man!, you got " + score + " points");
+		window.location.reload();
+	}
+
+	function gameOnMan(){
+		document.getElementById("score").innerHTML = "Score: " + score;
+	}
+
+	setInterval(updateEverything,10);
+</script>
+</body>
+</html>
